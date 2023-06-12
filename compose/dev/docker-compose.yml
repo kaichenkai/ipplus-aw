@@ -5,8 +5,6 @@ services:
       context: .
       dockerfile: ./compose/django/intra.Dockerfile
     image: ipplus_django
-    depends_on:
-      - mysql
     env_file: /data/envfile/ipplus.env
     volumes:
       - /data/volume/ipplus:/data
