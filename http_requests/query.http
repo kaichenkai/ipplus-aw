@@ -1,0 +1,4 @@
+POST http://localhost:8001/query/ipv4/
+Content-Type: application/json
+
+["119.9.108.208", "34.96.248.249", "34.96.158.67", "104.155.238.52", "119.9.108.208"]

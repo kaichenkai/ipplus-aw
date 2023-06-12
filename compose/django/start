@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+ls -lh /etc/nginx/conf.d/
+ln -sf /app/server_config/nginx/nginx.conf /etc/nginx/conf.d/ipplus.conf
+ln -sf /app/server_config/nginx/websocket.conf /etc/nginx/conf.d/websocket.conf
+ln -sf /app/server_config/supervisor/web.conf /etc/supervisor/conf.d/web.conf
+ln -sf /app/server_config/supervisor/websocket-api.conf /etc/supervisor/conf.d/websocket-api.conf
+rm -f /etc/nginx/sites-enabled/default
+
+
+#python /app/manage.py collectstatic --noinput
+#/usr/local/bin/gunicorn config.wsgi --bind 0.0.0.0:5000 --chdir=/app --log-file=-
+
+mkdir -p /data/log
+touch /data/log/ipplus-access.log
+touch /data/log/ipplus-error.log
+tail -n 0 -f /data/log/ipplus*.log & supervisord -n -c /etc/supervisor/supervisord.conf

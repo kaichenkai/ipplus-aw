@@ -1,0 +1,8 @@
+repos:
+- repo: https://github.com/PyCQA/prospector
+#  rev: 1.1.6.2
+  rev: 1.3.1
+  hooks:
+  - id: prospector
+    args: ["-E"]
+    exclude: .*(settings|migrations|apps\.py|admin\.py|fabfile.py|fabfile2.py|torspider|netdb|utils|zeronet|spider|pocs|filer|pagination|test_|serializers|utility|tests|commands|parser|parsetab|monitor).*

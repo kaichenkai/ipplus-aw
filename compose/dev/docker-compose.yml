@@ -1,0 +1,26 @@
+version: '3'
+services:
+  collectstatic: &django
+    build:
+      context: .
+      dockerfile: ./compose/django/intra.Dockerfile
+    image: ipplus_django
+    depends_on:
+      - mysql
+    env_file: /data/envfile/ipplus.env
+    volumes:
+      - /data/volume/ipplus:/data
+    command: python manage.py collectstatic --noinput --settings 'config.settings.production'
+
+  migrate:
+    <<: *django
+    image: ipplus_django
+    command: python manage.py migrate
+
+  web:
+    <<: *django
+    restart: always
+    command: /start
+    ports:
+       - "127.0.0.1:18282:8080"
+       - "127.0.0.1:18999:18999"

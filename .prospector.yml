@@ -1,0 +1,70 @@
+output-format: grouped
+strictness: veryhigh
+doc-warnings: true
+test-warnings: false
+max-line-length: 120
+
+ignore-paths:
+  - docs
+  - venv
+  - env
+  - .env
+  - .venv
+
+ignore-patterns:
+  - ^.*\/(admin|apps)\.py$
+
+pylint:
+  run: true
+  disable:
+    - too-many-lines
+    - too-many-statements
+    - too-many-branches
+    - self-assigning-variable
+    - bad-builtin
+    - too-few-public-methods
+    - star-args
+    - protected-access
+    - broad-except
+    - import-error
+    - missing-docstring
+    - no-self-use
+    - invalid-name
+    - unused-argument
+    - no-else-return
+    - too-many-arguments
+    - too-many-locals
+    - logging-fstring-interpolation
+    - expression-not-assigned
+    - inconsistent-return-statements
+    - useless-object-inheritance
+    - len-as-condition
+    - lost-exception
+    - attribute-defined-outside-init
+    - import-outside-toplevel
+    - unnecessary-pass
+    - too-many-nested-blocks
+
+mccabe:
+  disable:
+    - MC0001
+
+pep8:
+  full: true
+  disable:
+    - E731
+
+pep257:
+  full: true
+  disable:
+    - D100
+    - D102
+    - D104
+    - D105
+    - D106
+    - D200
+    - D203  # conflict D211
+    - D212  # conflict D213
+    - D400
+    - D401
+    - D415
