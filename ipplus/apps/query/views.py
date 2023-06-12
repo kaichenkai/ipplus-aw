@@ -12,8 +12,8 @@ from rest_framework.status import HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 
 from config.constants import AWDB_FILE_PATH
-from utility.aiwen_lib import awdb
-from utility.net import lazy_asn
+from ipplus.utils.aiwen_lib import awdb
+from ipplus.utils.net import lazy_asn
 
 logger = logging.getLogger(__name__)
 
