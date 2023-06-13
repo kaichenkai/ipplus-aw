@@ -25,14 +25,16 @@ class QueryIPV4APIView(APIView):
     tttt
     """
 
-    @swagger_auto_schema(manual_parameters=[
-        openapi.Parameter('ip_text', in_=openapi.IN_QUERY, description='ipv4文本内容', type=openapi.TYPE_STRING),
+    @swagger_auto_schema(
+        required=['ipv4', ],
+        manual_parameters=[
+            openapi.Parameter('ipv4', in_=openapi.IN_QUERY, description='ipv4文本内容(以逗号分隔)', type=openapi.TYPE_STRING),
     ])
     def get(self, request):
-        data = request.query_params.get("ip_text")
+        data = request.query_params.get("ipv4")
         if not data:
             return Response({"operation": "failed",
-                             "detail": 'ip_text参数不能为空，正确格式：10.10.10.10,11.11.11.11,22.22.22.22'},
+                             "detail": 'ipv4参数不能为空，正确格式：10.10.10.10,11.11.11.11,22.22.22.22'},
                              status=HTTP_400_BAD_REQUEST)
         else:
             data = data.replace(" ", "").replace("\n", "").replace("\t", "")
@@ -46,9 +48,26 @@ class QueryIPV4APIView(APIView):
             http_response["Content-Disposition"] = f"attachment; filename={file_name}"
             return http_response
 
+    @swagger_auto_schema(request_body=openapi.Schema(
+        # manual_parameters=[
+        #     openapi.Parameter('meta_id', in_=openapi.IN_PATH, description='列表页返回的ID', type=openapi.TYPE_STRING),
+        # ],
+        type=openapi.TYPE_OBJECT,
+        required=['ipv4', ],
+        properties={
+            'ipv4': openapi.Schema(
+                type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_STRING), description='ipv4列表'
+            ),
+        }
+    ))
     def post(self, request):
         data = request.data
-        if not isinstance(data, list):
+        ipv4_list = data.get('ipv4')
+        if not ipv4_list:
+            return Response({"operation": "failed",
+                             "detail": 'ipv4参数不能为空'},
+                            status=HTTP_400_BAD_REQUEST)
+        if not isinstance(ipv4_list, list):
             return Response({"operation": "failed",
                              "detail": '参数类型有误，正确格式: ["10.10.10.10", "11.11.11.11", "22.22.22.22"]'},
                             status=HTTP_400_BAD_REQUEST)
