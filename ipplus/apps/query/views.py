@@ -72,7 +72,7 @@ class QueryIPV4APIView(APIView):
                              "detail": '参数类型有误，正确格式: ["10.10.10.10", "11.11.11.11", "22.22.22.22"]'},
                             status=HTTP_400_BAD_REQUEST)
         #
-        output = self.handle(data)
+        output = self.handle(ipv4_list)
         # 设置HttpResponse的类型
         file_name = escape_uri_path("ipplus_info.xlsx")
         http_response = HttpResponse(content_type="application/vnd.ms-excel")
@@ -88,12 +88,12 @@ class QueryIPV4APIView(APIView):
         else:
             return False
 
-    def handle(self, data):
+    def handle(self, ipv4_list):
         """处理方法"""
 
         reader = awdb.open_database(AWDB_FILE_PATH)
         data_list = []
-        for ipv4 in data:
+        for ipv4 in ipv4_list:
             status = self.check_ipv4(ipv4)
             if status is False:
                 data_dict = {
