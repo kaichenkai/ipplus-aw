@@ -32,7 +32,7 @@ class QueryIPV4APIView(APIView):
     )
     def get(self, request):
         data = request.query_params.get("ipv4")
-        export = request.query_params.get("export")
+        export = request.query_params.get("export", "")
         if not data:
             return Response({"operation": "failed",
                              "detail": 'ipv4参数不能为空，正确格式：10.10.10.10,11.11.11.11,22.22.22.22'},
@@ -75,7 +75,7 @@ class QueryIPV4APIView(APIView):
             }
         ))
     def post(self, request):
-        export = request.query_params.get("export")
+        export = request.query_params.get("export", "")
         data = request.data
         ipv4_list = data.get('ipv4')
         if not ipv4_list:
