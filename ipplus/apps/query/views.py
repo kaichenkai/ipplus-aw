@@ -21,37 +21,50 @@ logger = logging.getLogger(__name__)
 class QueryIPV4APIView(APIView):
     """
     IPV4查询接口
-
-    tttt
     """
 
     @swagger_auto_schema(
         required=['ipv4', ],
         manual_parameters=[
             openapi.Parameter('ipv4', in_=openapi.IN_QUERY, description='ipv4文本内容(以逗号分隔)', type=openapi.TYPE_STRING),
-    ])
+            openapi.Parameter('export', in_=openapi.IN_QUERY, description='是否导出文件', type=openapi.TYPE_BOOLEAN),
+        ]
+    )
     def get(self, request):
         data = request.query_params.get("ipv4")
+        export = request.query_params.get("export")
         if not data:
             return Response({"operation": "failed",
                              "detail": 'ipv4参数不能为空，正确格式：10.10.10.10,11.11.11.11,22.22.22.22'},
-                             status=HTTP_400_BAD_REQUEST)
+                            status=HTTP_400_BAD_REQUEST)
         else:
             data = data.replace(" ", "").replace("\n", "").replace("\t", "")
             ipv4_list = data.split(",")
             #
-            output = self.handle(ipv4_list)
-            # 设置HttpResponse的类型
-            file_name = escape_uri_path("ipplus_info.xlsx")
-            http_response = HttpResponse(content_type="application/vnd.ms-excel")
-            http_response.content = output.getvalue()
-            http_response["Content-Disposition"] = f"attachment; filename={file_name}"
-            return http_response
+            data_list = self.handle(ipv4_list)
+            # 导出文件
+            if export:
+                df_data = pd.DataFrame(data_list)
+                # 准备写入到IO中
+                output = BytesIO()
+                writer = pd.ExcelWriter(output)
+                df_data.to_excel(writer)
+                #
+                output.seek(0)
+                writer.save()
+                # 设置HttpResponse的类型
+                file_name = escape_uri_path("ipplus_info.xlsx")
+                http_response = HttpResponse(content_type="application/vnd.ms-excel")
+                http_response.content = output.getvalue()
+                http_response["Content-Disposition"] = f"attachment; filename={file_name}"
+                return http_response
+            else:
+                return Response(data_list)
 
     @swagger_auto_schema(request_body=openapi.Schema(
-        # manual_parameters=[
-        #     openapi.Parameter('meta_id', in_=openapi.IN_PATH, description='列表页返回的ID', type=openapi.TYPE_STRING),
-        # ],
+        manual_parameters=[
+            openapi.Parameter('export', in_=openapi.IN_QUERY, description='是否导出文件', type=openapi.TYPE_BOOLEAN),
+        ],
         type=openapi.TYPE_OBJECT,
         required=['ipv4', ],
         properties={
@@ -61,6 +74,7 @@ class QueryIPV4APIView(APIView):
         }
     ))
     def post(self, request):
+        export = request.query_params.get("export")
         data = request.data
         ipv4_list = data.get('ipv4')
         if not ipv4_list:
@@ -72,13 +86,25 @@ class QueryIPV4APIView(APIView):
                              "detail": '参数类型有误，正确格式: ["10.10.10.10", "11.11.11.11", "22.22.22.22"]'},
                             status=HTTP_400_BAD_REQUEST)
         #
-        output = self.handle(ipv4_list)
-        # 设置HttpResponse的类型
-        file_name = escape_uri_path("ipplus_info.xlsx")
-        http_response = HttpResponse(content_type="application/vnd.ms-excel")
-        http_response.content = output.getvalue()
-        http_response["Content-Disposition"] = f"attachment; filename={file_name}"
-        return http_response
+        data_list = self.handle(ipv4_list)
+        # 导出文件
+        if export:
+            df_data = pd.DataFrame(data_list)
+            # 准备写入到IO中
+            output = BytesIO()
+            writer = pd.ExcelWriter(output)
+            df_data.to_excel(writer)
+            #
+            output.seek(0)
+            writer.save()
+            # 设置HttpResponse的类型
+            file_name = escape_uri_path("ipplus_info.xlsx")
+            http_response = HttpResponse(content_type="application/vnd.ms-excel")
+            http_response.content = output.getvalue()
+            http_response["Content-Disposition"] = f"attachment; filename={file_name}"
+            return http_response
+        else:
+            return Response(data_list)
 
     def check_ipv4(self, ipv4):
         compile_ip = re.compile(
@@ -131,12 +157,4 @@ class QueryIPV4APIView(APIView):
             data_list.append(data_dict)
 
         #
-        df_data = pd.DataFrame(data_list)
-        # 准备写入到IO中
-        output = BytesIO()
-        writer = pd.ExcelWriter(output)
-        df_data.to_excel(writer)
-        #
-        output.seek(0)
-        writer.save()
-        return output
+        return data_list
