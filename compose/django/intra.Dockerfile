@@ -59,7 +59,7 @@ RUN chown django /start
 VOLUME /data
 USER django
 WORKDIR /app
-EXPOSE 8080 18999
+EXPOSE 8080
 
 ENTRYPOINT ["/entrypoint"]
 
