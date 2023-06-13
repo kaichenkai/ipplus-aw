@@ -11,7 +11,7 @@ class HomeAPIView(APIView):
     """IPPLUS Home Page"""
 
     def get(self, request):
-        return response.Response({'title': 'IPPLUS', 'version': __version__})
+        return response.Response({'title': 'IPPLUS', 'version': __version__, 'index': 'http://IP:5180/docs/swagger/'})
 
 
 def server_error(request, *args, **kwargs):
