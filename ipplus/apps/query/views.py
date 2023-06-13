@@ -43,7 +43,7 @@ class QueryIPV4APIView(APIView):
             #
             data_list = self.handle(ipv4_list)
             # 导出文件
-            if export:
+            if export is True or export.lower() == 'true':
                 df_data = pd.DataFrame(data_list)
                 # 准备写入到IO中
                 output = BytesIO()
@@ -61,18 +61,19 @@ class QueryIPV4APIView(APIView):
             else:
                 return Response(data_list)
 
-    @swagger_auto_schema(request_body=openapi.Schema(
+    @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter('export', in_=openapi.IN_QUERY, description='是否导出文件', type=openapi.TYPE_BOOLEAN),
         ],
-        type=openapi.TYPE_OBJECT,
-        required=['ipv4', ],
-        properties={
-            'ipv4': openapi.Schema(
-                type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_STRING), description='ipv4列表'
-            ),
-        }
-    ))
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['ipv4', ],
+            properties={
+                'ipv4': openapi.Schema(
+                    type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_STRING), description='ipv4列表'
+                ),
+            }
+        ))
     def post(self, request):
         export = request.query_params.get("export")
         data = request.data
@@ -88,7 +89,7 @@ class QueryIPV4APIView(APIView):
         #
         data_list = self.handle(ipv4_list)
         # 导出文件
-        if export:
+        if export is True or export.lower() == 'true':
             df_data = pd.DataFrame(data_list)
             # 准备写入到IO中
             output = BytesIO()
