@@ -32,7 +32,8 @@ RUN mkdir /app
 WORKDIR /app
 
 COPY ./requirements/base.txt /app/requirements/base.txt
-RUN pip install --no-cache-dir -r /app/requirements/base.txt -i https://pypi.douban.com/simple/ --trusted-host pypi.douban.com
+COPY ./requirements/production.txt /app/requirements/production.txt
+RUN pip install --no-cache-dir -r /app/requirements/production.txt -i https://pypi.douban.com/simple/ --trusted-host pypi.douban.com
 
 COPY config /app/config
 COPY ipplus /app/ipplus

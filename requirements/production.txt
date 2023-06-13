@@ -1,0 +1,19 @@
+# Pro-tip: Try not to put anything here. Avoid dependencies in
+#	production that aren't in development.
+-r base.txt
+
+
+
+# WSGI Handler
+# ------------------------------------------------
+gevent==22.10.2
+eventlet==0.33.3
+# gunicorn==19.7.1
+uwsgi==2.0.21
+daphne
+
+# Static and Media Storage
+# ------------------------------------------------
+# boto3==1.5.22
+# django-storages==1.6.5
+# Collectfast==0.6.0
