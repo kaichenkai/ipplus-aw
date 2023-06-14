@@ -152,7 +152,7 @@ class QueryIPV4APIView(APIView):
                     "user_type": record.get("user_type", b"").decode(),
                     "user": record.get("user", b"").decode(),
                     "correctness": record.get("correctness", b"").decode(),
-                    "lazy_asn": lazy_asn.lookup(ipv4),
+                    "asn": lazy_asn.lookup(ipv4),
                 }
             # if info.country.lower().__contains__("china"):
             data_list.append(data_dict)
